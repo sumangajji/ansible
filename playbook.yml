@@ -1,0 +1,32 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Ensure git installed
+    apt: name=git state=installed
+
+  - name: Ensure apache installed
+    apt: name=apache2 state=installed
+
+  - name: ensure firewall stopped
+    service: name=ufw state=stopped
+
+  - name: ensure apache running
+    service: name=apache2 state=started
+
+  - name: Directory
+    file: path=/home/vagrant/training state=directory
+
+- hosts: dbservers
+  become: yes
+
+  tasks:
+  - name: ensure mysql server installed
+    yum: name=mysql-server state=installed
+
+  - name: Ensure httpd installed
+    yum: name=httpd state=installed
+  
+  - name: ensure mysql running
+    service: name=mysqld state=started
+  

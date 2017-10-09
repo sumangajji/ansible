@@ -1,0 +1,38 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Ensure Apache installed 
+      apt: 
+      name: apache2 
+      state: present
+
+    - name: Creates directory 
+      file: path=/var/www/html/ansible state=directory
+
+    - name: DEploy webpage to path=/var/www/html/ansible 
+      copy: src=index.html dest=/var/www/html/ansible/index.html mode=0644
+
+    - name: Ensure apache is running 
+      service: name=apache2 state=started enabled=yes
+
+    - name: Flush all temperory rules
+      service: name=ufw state=restarted
+
+    - name: Allow port 80/apache2 access from anywhere
+      ufw: rule=allow src=0.0.0.0/0
+
+- hosts: dbservers
+  become: yes
+  tasks:
+    - name: Ensure mysql server installed
+      yum: name=mysql-server state=present
+
+    - name: Ensure mysql running 
+      service: name=mysqld state=started
+
+    - name: Ensure Mysql-python is installed
+      yum: name=MySQL-python state=present
+ 
+    - name: Create Database
+      mysql_user: name=suman password=iamdevops priv='*.*:ALL' state=present
